@@ -30,8 +30,6 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-config:3.1.3'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.7.0'
     implementation 'org.springframework.boot:spring-boot-starter-aop:2.7.0'
-//    implementation 'org.ruslan.todo.mc:planner-entity'
-//    implementation group: 'org.ruslan.todo.mc', name: 'planner-entity', transitive: true
     implementation files('libs/planner-entity-0.0.1.jar')
 
     // driver DB
