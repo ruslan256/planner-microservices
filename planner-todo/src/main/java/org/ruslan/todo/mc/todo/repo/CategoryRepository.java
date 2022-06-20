@@ -8,21 +8,18 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-// Можно сразу использовать все методы CRUD (Create, Read, Update, Delete)
-// принцип ООП: абстракция-реализация - здесь описываем все доступные способы доступа к данным
-
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    // поиск категорий пользователя (по названию)
+    // search for all category for the selected user
     List<Category> findByUserIdOrderByTitleAsc(Long id);
 
-    // поиск значений по названию для конкретного пользователя
+    // search values by title for the selected user
     @Query("SELECT c FROM Category c where " +
-            "(:title is null or :title='' " + // если передадим параметр title пустым, то выберутся все записи (сработает именно это условие)
-            " or lower(c.title) like lower(concat('%', :title,'%'))) " + // если параметр title не пустой, то выполнится уже это условие
-            " and c.userId=:id    " + // фильтрация для конкретного пользователя
-            " order by c.title asc")  // сортировка по названию
+            "(:title is null or :title='' "  +
+            " or lower(c.title) like lower(concat('%', :title,'%'))) " +
+            " and c.userId=:id    " +
+            " order by c.title asc")
     List<Category> findByTitle(@Param("title") String title, @Param("id") Long id);
 
 }
