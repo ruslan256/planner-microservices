@@ -13,7 +13,7 @@ import org.springframework.util.StopWatch;
 @Log
 public class LoggingAspect {
 
-    @Around("execution(* org.ruslan.todo.mc.todo.controller..*(..)))")
+    @Around("execution(* org.ruslan.todo.mc.*.controller..*(..)))")
     public Object profileControllerMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable
     {
 
