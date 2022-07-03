@@ -25,6 +25,8 @@ ext {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter:2.7.0'
     implementation 'org.springframework.boot:spring-boot-starter-aop:2.7.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.7.0'
+    implementation files('libs/planner-entity-0.0.1.jar')
 
     // lombok
     compileOnly 'org.projectlombok:lombok:1.18.24'
