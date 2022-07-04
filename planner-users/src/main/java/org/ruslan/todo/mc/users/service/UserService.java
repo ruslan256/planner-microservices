@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -38,8 +39,8 @@ public class UserService {
         repository.deleteByEmail(email);
     }
 
-    public User findById(Long id) {
-        return repository.findById(id).get();
+    public Optional<User> findById(Long id) {
+        return repository.findById(id);
     }
 
     public Page<User> findByParams(String email, String username, PageRequest paging) {

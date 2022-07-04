@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -99,16 +100,17 @@ public class UserController {
     @PostMapping("/id")
     public ResponseEntity<User> findById(@RequestBody Long id) {
 
-        User user = null;
+        Optional<User> userOptional = userService.findById(id);
 
         try {
-            user = userService.findById(id);
+            if (userOptional.isPresent()) {
+                return ResponseEntity.ok(userOptional.get());
+            }
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-            return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(user);
+        return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
     // search User by email
