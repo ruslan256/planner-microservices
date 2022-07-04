@@ -1,7 +1,6 @@
 package org.ruslan.todo.mc.utils.resttemplate;
 
 import org.ruslan.todo.mc.entity.User;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -12,8 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class UserRestBuilder {
 
-    @Value("${baseUrlUser}")
-    private String baseUrl;
+    private static final String baseUrl = "http://localhost:8765/planner-users/user";
 
     public boolean userExists(Long userId) {
 
