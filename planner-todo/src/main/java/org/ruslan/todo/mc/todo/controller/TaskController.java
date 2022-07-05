@@ -3,6 +3,7 @@ package org.ruslan.todo.mc.todo.controller;
 import org.ruslan.todo.mc.entity.Task;
 import org.ruslan.todo.mc.todo.search.TaskSearchValues;
 import org.ruslan.todo.mc.todo.service.TaskService;
+import org.ruslan.todo.mc.utils.resttemplate.UserRestBuilder;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,8 +25,12 @@ public class TaskController {
     public static final String ID_COLUMN = "id";
     private final TaskService taskService;
 
-    public TaskController(TaskService taskService) {
+    // a microservice for working with 'User' class
+    private final UserRestBuilder userRestBuilder;
+
+    public TaskController(TaskService taskService, UserRestBuilder userRestBuilder) {
         this.taskService = taskService;
+        this.userRestBuilder = userRestBuilder;
     }
 
     // get everything
@@ -45,7 +50,13 @@ public class TaskController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(taskService.add(task));
+        // if the user does exist
+        if (userRestBuilder.userExists(task.getUserId())) {
+            return ResponseEntity.ok(taskService.add(task));
+        }
+
+        // if the user does not exist
+        return new ResponseEntity("user id = " + task.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/update")
