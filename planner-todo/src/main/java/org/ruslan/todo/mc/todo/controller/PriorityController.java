@@ -3,6 +3,7 @@ package org.ruslan.todo.mc.todo.controller;
 import org.ruslan.todo.mc.entity.Priority;
 import org.ruslan.todo.mc.todo.search.PrioritySearchValues;
 import org.ruslan.todo.mc.todo.service.PriorityService;
+import org.ruslan.todo.mc.utils.resttemplate.UserRestBuilder;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +16,15 @@ import java.util.NoSuchElementException;
 @RequestMapping("/priority")
 public class PriorityController {
 
-    private PriorityService priorityService;
+    private final PriorityService priorityService;
 
-    public PriorityController(PriorityService priorityService) {
+    // microservice for working with 'User' class
+    private final UserRestBuilder userRestBuilder;
+
+    public PriorityController(PriorityService priorityService, UserRestBuilder userRestBuilder) {
         this.priorityService = priorityService;
+        this.userRestBuilder = userRestBuilder;
     }
-
 
     @PostMapping("/all")
     public List<Priority> findAll(@RequestBody Long userId) {
@@ -43,7 +47,13 @@ public class PriorityController {
             return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(priorityService.add(priority));
+        // if the user does exist
+        if (userRestBuilder.userExists(priority.getUserId())) {
+            return ResponseEntity.ok(priorityService.add(priority));
+        }
+
+        // if the user does not exist
+        return new ResponseEntity("user id = " + priority.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
 
