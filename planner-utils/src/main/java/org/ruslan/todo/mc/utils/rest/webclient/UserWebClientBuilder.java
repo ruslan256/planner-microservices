@@ -1,8 +1,10 @@
 package org.ruslan.todo.mc.utils.rest.webclient;
 
 import org.ruslan.todo.mc.entity.User;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+@Component
 public class UserWebClientBuilder {
 
     private static final String baseUrl = "http://localhost:8765/planner-users/user/";
