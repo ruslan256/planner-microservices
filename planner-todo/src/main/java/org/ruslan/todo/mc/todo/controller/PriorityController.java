@@ -3,7 +3,8 @@ package org.ruslan.todo.mc.todo.controller;
 import org.ruslan.todo.mc.entity.Priority;
 import org.ruslan.todo.mc.todo.search.PrioritySearchValues;
 import org.ruslan.todo.mc.todo.service.PriorityService;
-import org.ruslan.todo.mc.utils.rest.webclient.UserWebClientBuilder;
+import org.ruslan.todo.mc.utils.rest.api.IUserServiceClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,11 @@ public class PriorityController {
     private final PriorityService priorityService;
 
     // microservice for working with 'User' class
-    private final UserWebClientBuilder userWebClientBuilder;
+    private final IUserServiceClient userServiceClient;
 
-    public PriorityController(PriorityService priorityService, UserWebClientBuilder userWebClientBuilder) {
+    public PriorityController(PriorityService priorityService,  @Qualifier("restTemplate") IUserServiceClient userServiceClient) {
         this.priorityService = priorityService;
-        this.userWebClientBuilder = userWebClientBuilder;
+        this.userServiceClient = userServiceClient;
     }
 
     @PostMapping("/all")
@@ -48,7 +49,7 @@ public class PriorityController {
         }
 
         // if the user does exist
-        if (userWebClientBuilder.userExists(priority.getUserId())) {
+        if (userServiceClient.userExists(priority.getUserId())) {
             return ResponseEntity.ok(priorityService.add(priority));
         }
 

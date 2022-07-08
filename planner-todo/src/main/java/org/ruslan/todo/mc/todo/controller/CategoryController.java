@@ -3,7 +3,8 @@ package org.ruslan.todo.mc.todo.controller;
 import org.ruslan.todo.mc.entity.Category;
 import org.ruslan.todo.mc.todo.search.CategorySearchValues;
 import org.ruslan.todo.mc.todo.service.CategoryService;
-import org.ruslan.todo.mc.utils.rest.webclient.UserWebClientBuilder;
+import org.ruslan.todo.mc.utils.rest.api.IUserServiceClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,11 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     // microservice for working with 'User' class
-    private final UserWebClientBuilder userWebClientBuilder;
+    private final IUserServiceClient userServiceClient;
 
-    public CategoryController(CategoryService categoryService, UserWebClientBuilder userWebClientBuilder) {
+    public CategoryController(CategoryService categoryService, @Qualifier("webClient") IUserServiceClient userServiceClient) {
         this.categoryService = categoryService;
-        this.userWebClientBuilder = userWebClientBuilder;
+        this.userServiceClient = userServiceClient;
     }
 
     @PostMapping("/all")
@@ -44,7 +45,7 @@ public class CategoryController {
         }
 
         // if the user does exist
-        if (userWebClientBuilder.userExists(category.getUserId())) { // call for microservice from another module
+        if (userServiceClient.userExists(category.getUserId())) { // call for microservice from another module
             return ResponseEntity.ok(categoryService.add(category));
         }
 

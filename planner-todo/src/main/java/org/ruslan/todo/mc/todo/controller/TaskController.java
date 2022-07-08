@@ -3,7 +3,8 @@ package org.ruslan.todo.mc.todo.controller;
 import org.ruslan.todo.mc.entity.Task;
 import org.ruslan.todo.mc.todo.search.TaskSearchValues;
 import org.ruslan.todo.mc.todo.service.TaskService;
-import org.ruslan.todo.mc.utils.rest.webclient.UserWebClientBuilder;
+import org.ruslan.todo.mc.utils.rest.api.IUserServiceClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,11 +27,11 @@ public class TaskController {
     private final TaskService taskService;
 
     // a microservice for working with 'User' class
-    private final UserWebClientBuilder userWebClientBuilder;
+    private final IUserServiceClient userServiceClient;
 
-    public TaskController(TaskService taskService, UserWebClientBuilder userWebClientBuilder) {
+    public TaskController(TaskService taskService, @Qualifier("webClient") IUserServiceClient userServiceClient) {
         this.taskService = taskService;
-        this.userWebClientBuilder = userWebClientBuilder;
+        this.userServiceClient = userServiceClient;
     }
 
     // get everything
@@ -51,7 +52,7 @@ public class TaskController {
         }
 
         // if the user does exist
-        if (userWebClientBuilder.userExists(task.getUserId())) {
+        if (userServiceClient.userExists(task.getUserId())) {
             return ResponseEntity.ok(taskService.add(task));
         }
 

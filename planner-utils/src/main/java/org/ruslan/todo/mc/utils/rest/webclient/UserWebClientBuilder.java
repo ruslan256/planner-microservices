@@ -1,14 +1,14 @@
 package org.ruslan.todo.mc.utils.rest.webclient;
 
 import org.ruslan.todo.mc.entity.User;
+import org.ruslan.todo.mc.utils.rest.api.IUserServiceClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@Component
-public class UserWebClientBuilder {
+@Component(value = "webClient")
+public class UserWebClientBuilder implements IUserServiceClient {
 
-    private static final String baseUrl = "http://localhost:8765/planner-users/user/";
-
+    @Override
     public boolean userExists(Long userId) {
 
         try {
