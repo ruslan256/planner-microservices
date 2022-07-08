@@ -1,4 +1,4 @@
-package org.ruslan.todo.mc.utils.resttemplate;
+package org.ruslan.todo.mc.utils.rest.resttemplate;
 
 import org.ruslan.todo.mc.entity.User;
 import org.springframework.http.HttpEntity;
