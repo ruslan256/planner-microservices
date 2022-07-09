@@ -44,7 +44,11 @@ public class CategoryController {
             return new ResponseEntity("missed param: title MUST be not null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        // if the user does exist
+        // This is an asynchronous service call
+//        userServiceClient.userExistsAsync(category.getUserId()).subscribe(user -> System.out.println("user = " + user +
+//                "; category = " + categoryService.add(category)));
+
+        // This is a synchronous service call
         if (userServiceClient.userExists(category.getUserId())) { // call for microservice from another module
             return ResponseEntity.ok(categoryService.add(category));
         }
