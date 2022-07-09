@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component(value = "restTemplate")
 public class UserRestBuilder implements IUserServiceClient {
@@ -30,6 +32,11 @@ public class UserRestBuilder implements IUserServiceClient {
         }
 
         return false;
+    }
+
+    @Override
+    public Flux<User> userExistsAsync(Long userId) {
+        return Flux.from(Mono.empty());
     }
 
 }
