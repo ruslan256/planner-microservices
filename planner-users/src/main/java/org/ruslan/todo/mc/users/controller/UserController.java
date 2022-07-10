@@ -3,6 +3,7 @@ package org.ruslan.todo.mc.users.controller;
 import org.ruslan.todo.mc.entity.User;
 import org.ruslan.todo.mc.users.search.UserSearchValues;
 import org.ruslan.todo.mc.users.service.UserService;
+import org.ruslan.todo.mc.utils.rest.api.IDataServiceClient;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,9 +22,11 @@ public class UserController {
 
     public static final String ID_COLUMN = "id";
     private final UserService userService;
+    private final IDataServiceClient dataServiceClient;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, IDataServiceClient dataServiceClient) {
         this.userService = userService;
+        this.dataServiceClient = dataServiceClient;
     }
 
     @PostMapping("/add")
@@ -45,7 +48,18 @@ public class UserController {
             return new ResponseEntity("missed param: username", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(userService.add(user));
+        // add the new user
+        user = userService.add(user);
+
+        if (user != null) {
+            // fill in initial user data (in parallel flow)
+            dataServiceClient.initUserDataAsync(user.getId()).subscribe(result -> {
+                        System.out.println("user populated: " + result);
+                    }
+            );
+        }
+
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/update")

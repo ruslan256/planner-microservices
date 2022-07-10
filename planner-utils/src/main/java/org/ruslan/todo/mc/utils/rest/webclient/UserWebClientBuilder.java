@@ -13,7 +13,7 @@ public class UserWebClientBuilder implements IUserServiceClient {
     public boolean userExists(Long userId) {
 
         try {
-            User user = WebClient.create(baseUrl)
+            User user = WebClient.create(baseUrlUser)
                     .post()
                     .uri("id")
                     .bodyValue(userId)
@@ -33,11 +33,11 @@ public class UserWebClientBuilder implements IUserServiceClient {
     @Override
     public Flux<User> userExistsAsync(Long userId) {
 
-        return WebClient.create(baseUrl)
+        return WebClient.create(baseUrlUser)
                 .post()
                 .uri("id")
                 .bodyValue(userId)
                 .retrieve()
-                .bodyToFlux(User.class);                 // asynchronous call
+                .bodyToFlux(User.class);           // asynchronous call
     }
 }
