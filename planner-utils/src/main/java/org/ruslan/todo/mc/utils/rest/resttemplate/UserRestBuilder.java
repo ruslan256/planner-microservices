@@ -21,7 +21,7 @@ public class UserRestBuilder implements IUserServiceClient {
         HttpEntity<Long> request = new HttpEntity(userId);
 
         try {
-            ResponseEntity<User> response = restTemplate.exchange(baseUrl + "id", HttpMethod.POST, request, User.class);
+            ResponseEntity<User> response = restTemplate.exchange(baseUrlUser + "id", HttpMethod.POST, request, User.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 return true;
