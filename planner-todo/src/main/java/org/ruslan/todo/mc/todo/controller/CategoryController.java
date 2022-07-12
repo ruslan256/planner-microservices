@@ -1,6 +1,7 @@
 package org.ruslan.todo.mc.todo.controller;
 
 import org.ruslan.todo.mc.entity.Category;
+import org.ruslan.todo.mc.todo.feign.UserFeignClient;
 import org.ruslan.todo.mc.todo.search.CategorySearchValues;
 import org.ruslan.todo.mc.todo.service.CategoryService;
 import org.ruslan.todo.mc.utils.rest.api.IUserServiceClient;
@@ -23,9 +24,15 @@ public class CategoryController {
     // microservice for working with 'User' class
     private final IUserServiceClient userServiceClient;
 
-    public CategoryController(CategoryService categoryService, @Qualifier("webClient") IUserServiceClient userServiceClient) {
+    //
+    private final UserFeignClient userFeignClient;
+
+    public CategoryController(CategoryService categoryService,
+                              @Qualifier("webClient") IUserServiceClient userServiceClient,
+                              UserFeignClient userFeignClient) {
         this.categoryService = categoryService;
         this.userServiceClient = userServiceClient;
+        this.userFeignClient = userFeignClient;
     }
 
     @PostMapping("/all")
@@ -49,12 +56,20 @@ public class CategoryController {
 //                "; category = " + categoryService.add(category)));
 
         // This is a synchronous service call
-        if (userServiceClient.userExists(category.getUserId())) { // call for microservice from another module
-            return ResponseEntity.ok(categoryService.add(category));
+//        if (userServiceClient.userExists(category.getUserId())) { // call for microservice from another module
+//            return ResponseEntity.ok(categoryService.add(category));
+//        }
+
+        try {
+            // call microservice via 'feign' interface
+            userFeignClient.findUserById(category.getUserId());
+        } catch (Exception exp) {
+            // if the user does not exist
+            exp.printStackTrace();
+            return new ResponseEntity("user id = " + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        // if the user does not exist
-        return new ResponseEntity("user id = " + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+        return ResponseEntity.ok(categoryService.add(category));
     }
 
     @PutMapping("/update")
@@ -80,7 +95,7 @@ public class CategoryController {
             categoryService.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
-            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
 
         return new ResponseEntity(HttpStatus.OK);
@@ -108,7 +123,7 @@ public class CategoryController {
             category = categoryService.findById(id);
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-            return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity("id = " + id + " not found", HttpStatus.NOT_ACCEPTABLE);
         }
 
         return ResponseEntity.ok(category);
