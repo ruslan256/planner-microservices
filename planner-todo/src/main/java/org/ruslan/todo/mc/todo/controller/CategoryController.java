@@ -60,16 +60,13 @@ public class CategoryController {
 //            return ResponseEntity.ok(categoryService.add(category));
 //        }
 
-        try {
-            // call microservice via 'feign' interface
-            userFeignClient.findUserById(category.getUserId());
-        } catch (Exception exp) {
-            // if the user does not exist
-            exp.printStackTrace();
-            return new ResponseEntity("user id = " + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+        // call microservice via 'Feign' interface
+        if (userFeignClient.findUserById(category.getUserId()) != null){
+            return ResponseEntity.ok(categoryService.add(category));
         }
 
-        return ResponseEntity.ok(categoryService.add(category));
+        // if the user does not exist
+        return new ResponseEntity("user id = " + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/update")
