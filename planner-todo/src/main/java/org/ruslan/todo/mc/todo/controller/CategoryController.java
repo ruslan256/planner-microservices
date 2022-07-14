@@ -1,6 +1,7 @@
 package org.ruslan.todo.mc.todo.controller;
 
 import org.ruslan.todo.mc.entity.Category;
+import org.ruslan.todo.mc.entity.User;
 import org.ruslan.todo.mc.todo.feign.UserFeignClient;
 import org.ruslan.todo.mc.todo.search.CategorySearchValues;
 import org.ruslan.todo.mc.todo.service.CategoryService;
@@ -61,7 +62,17 @@ public class CategoryController {
 //        }
 
         // call microservice via 'Feign' interface
-        if (userFeignClient.findUserById(category.getUserId()) != null){
+//        if (userFeignClient.findUserById(category.getUserId()) != null){
+//            return ResponseEntity.ok(categoryService.add(category));
+//        }
+
+        ResponseEntity<User> result = userFeignClient.findUserById(category.getUserId());
+
+        if (result == null){            // if the microservice is not available - will return 'null'
+            return new ResponseEntity("System of the Users is not available, try later!", HttpStatus.NOT_FOUND);
+        }
+
+        if (result.getBody() != null){  // if the user exist
             return ResponseEntity.ok(categoryService.add(category));
         }
 
