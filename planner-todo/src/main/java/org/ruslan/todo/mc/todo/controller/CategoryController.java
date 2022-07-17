@@ -1,6 +1,7 @@
 package org.ruslan.todo.mc.todo.controller;
 
 import org.ruslan.todo.mc.entity.Category;
+import org.ruslan.todo.mc.entity.User;
 import org.ruslan.todo.mc.todo.feign.UserFeignClient;
 import org.ruslan.todo.mc.todo.search.CategorySearchValues;
 import org.ruslan.todo.mc.todo.service.CategoryService;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/category") // базовый URI
+@RequestMapping("/category") // base URI
 public class CategoryController {
 
     // access to database data
@@ -24,12 +25,12 @@ public class CategoryController {
     // microservice for working with 'User' class
     private final IUserServiceClient userServiceClient;
 
-    //
+    // add Feign Client
     private final UserFeignClient userFeignClient;
 
     public CategoryController(CategoryService categoryService,
                               @Qualifier("webClient") IUserServiceClient userServiceClient,
-                              UserFeignClient userFeignClient) {
+                              @Qualifier("org.ruslan.todo.mc.todo.feign.UserFeignClient") UserFeignClient userFeignClient) {
         this.categoryService = categoryService;
         this.userServiceClient = userServiceClient;
         this.userFeignClient = userFeignClient;
@@ -61,7 +62,17 @@ public class CategoryController {
 //        }
 
         // call microservice via 'Feign' interface
-        if (userFeignClient.findUserById(category.getUserId()) != null){
+//        if (userFeignClient.findUserById(category.getUserId()) != null){
+//            return ResponseEntity.ok(categoryService.add(category));
+//        }
+
+        ResponseEntity<User> result = userFeignClient.findUserById(category.getUserId());
+
+        if (result == null){            // if the microservice is not available - will return 'null'
+            return new ResponseEntity("System of the Users is not available, try later!", HttpStatus.NOT_FOUND);
+        }
+
+        if (result.getBody() != null){  // if the user exist
             return ResponseEntity.ok(categoryService.add(category));
         }
 
