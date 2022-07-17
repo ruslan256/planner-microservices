@@ -32,7 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop:2.7.0'
     implementation 'org.springframework.boot:spring-boot-starter-webflux:2.7.0'
     implementation 'org.springframework.cloud:spring-cloud-starter-feign:1.4.7.RELEASE'
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix:+'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.10.RELEASE'
     implementation files('libs/planner-entity-0.0.1.jar')
     implementation files('libs/planner-utils-0.0.1.jar')
 

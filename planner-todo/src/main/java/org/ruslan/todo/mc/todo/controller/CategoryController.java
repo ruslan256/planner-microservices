@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/category") // базовый URI
+@RequestMapping("/category") // base URI
 public class CategoryController {
 
     // access to database data
@@ -25,12 +25,12 @@ public class CategoryController {
     // microservice for working with 'User' class
     private final IUserServiceClient userServiceClient;
 
-    //
+    // add Feign Client
     private final UserFeignClient userFeignClient;
 
     public CategoryController(CategoryService categoryService,
                               @Qualifier("webClient") IUserServiceClient userServiceClient,
-                              UserFeignClient userFeignClient) {
+                              @Qualifier("org.ruslan.todo.mc.todo.feign.UserFeignClient") UserFeignClient userFeignClient) {
         this.categoryService = categoryService;
         this.userServiceClient = userServiceClient;
         this.userFeignClient = userFeignClient;
