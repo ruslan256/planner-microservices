@@ -1,6 +1,7 @@
 package org.ruslan.todo.mc.users.controller;
 
 import org.ruslan.todo.mc.entity.User;
+import org.ruslan.todo.mc.users.mq.MessageProducer;
 import org.ruslan.todo.mc.users.search.UserSearchValues;
 import org.ruslan.todo.mc.users.service.UserService;
 import org.ruslan.todo.mc.utils.rest.api.IDataServiceClient;
@@ -23,10 +24,12 @@ public class UserController {
     public static final String ID_COLUMN = "id";
     private final UserService userService;
     private final IDataServiceClient dataServiceClient;
+    private final MessageProducer messageProducer; // service for sending messages through MQ
 
-    public UserController(UserService userService, IDataServiceClient dataServiceClient) {
+    public UserController(UserService userService, IDataServiceClient dataServiceClient, MessageProducer messageProducer) {
         this.userService = userService;
         this.dataServiceClient = dataServiceClient;
+        this.messageProducer = messageProducer;
     }
 
     @PostMapping("/add")
@@ -51,12 +54,15 @@ public class UserController {
         // add the new user
         user = userService.add(user);
 
+//        if (user != null) {
+//            // fill in initial user data (in parallel flow)
+//            dataServiceClient.initUserDataAsync(user.getId()).subscribe(result -> {
+//                        System.out.println("user populated: " + result);
+//                    }
+//            );
+//        }
         if (user != null) {
-            // fill in initial user data (in parallel flow)
-            dataServiceClient.initUserDataAsync(user.getId()).subscribe(result -> {
-                        System.out.println("user populated: " + result);
-                    }
-            );
+            messageProducer.initUserData(user.getId()); // send message in channel
         }
 
         return ResponseEntity.ok(user);
