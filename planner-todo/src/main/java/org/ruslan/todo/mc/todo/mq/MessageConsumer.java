@@ -16,7 +16,11 @@ public class MessageConsumer {
     }
 
     @StreamListener(target = InputBinding.INPUT_CHANNEL)
-    public void initTestData(Long userId) {
-        userInitDataService.initUserData(userId);
+    public void initTestData(Long userId) throws Exception {
+        if (userId > 20030) {
+            userInitDataService.initUserData(userId);
+        } else {
+            throw new Exception("Active Dead-Letter-Queue for user ID <= 20030");
+        }
     }
 }
