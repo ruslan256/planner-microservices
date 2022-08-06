@@ -1,12 +1,12 @@
-package org.ruslan.todo.mc.users.mq;
+package org.ruslan.todo.mc.users.mq.legacy;
 
-import org.springframework.cloud.stream.annotation.EnableBinding;
+//import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.stereotype.Component;
+//import org.springframework.stereotype.Component;
 
-@Component
-@EnableBinding(OutputBinding.class)
+//@Component
+//@EnableBinding(OutputBinding.class)
 public class MessageProducer {
 
     private final OutputBinding outputBinding;
