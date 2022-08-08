@@ -17,7 +17,7 @@ public class DefChannelConsumerFunc {
     }
 
     @Bean
-    public Consumer<Message<Long>> newUserActionConsume() {
+    public Consumer<Message<Long>> newUserDataActionConsume() {
         return message -> userInitDataService.initUserData(message.getPayload());
     }
 }
