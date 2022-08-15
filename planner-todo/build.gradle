@@ -45,6 +45,10 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.7.0'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    testImplementation "org.apache.kafka:kafka-streams-test-utils:3.1.0"
+    testImplementation "junit:junit:4.13.2"
+    testImplementation 'org.hamcrest:hamcrest:2.2'
 }
 
 dependencyManagement {
