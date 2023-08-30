@@ -1,7 +1,6 @@
 package org.ruslan.todo.mc.users.controller;
 
 import org.ruslan.todo.mc.entity.User;
-import org.ruslan.todo.mc.users.mq.func.MessageActionsFunc;
 import org.ruslan.todo.mc.users.search.UserSearchValues;
 import org.ruslan.todo.mc.users.service.UserService;
 import org.ruslan.todo.mc.utils.rest.api.IDataServiceClient;
@@ -11,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -22,16 +22,22 @@ import java.util.Optional;
 public class UserController {
 
     public static final String ID_COLUMN = "id";
+    private static final String TOPIC_NAME = "javabegin-test";
     private final UserService userService;
     private final IDataServiceClient dataServiceClient;
 //    private final MessageProducer messageProducer; // service for sending messages through MQ
-    // to send a message on demand
-    private final MessageActionsFunc messageActionsFunc;
+    // to send a message (into RabbitMQ) on demand
+//    private final MessageActionsFunc messageActionsFunc;
+    // to send a message (into Kafka) on demand
+    private final KafkaTemplate<String, Long> kafkaTemplate;
 
-    public UserController(UserService userService, IDataServiceClient dataServiceClient, MessageActionsFunc messageActionsFunc) {
+    public UserController(UserService userService, IDataServiceClient dataServiceClient,
+//                          MessageActionsFunc messageActionsFunc,
+                          KafkaTemplate<String, Long> kafkaTemplate) {
         this.userService = userService;
         this.dataServiceClient = dataServiceClient;
-        this.messageActionsFunc = messageActionsFunc;
+//        this.messageActionsFunc = messageActionsFunc;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @PostMapping("/add")
@@ -68,7 +74,8 @@ public class UserController {
 //            messageProducer.initUserData(user.getId()); // send a message in channel
 //        }
         if (user != null) {
-            messageActionsFunc.sendNewUserMessage(user.getId()); // send a message in channel
+//            messageActionsFunc.sendNewUserMessage(user.getId()); // send a message in channel RabbitMQ
+            kafkaTemplate.send(TOPIC_NAME, user.getId());  // send a message in topic Kafka
         }
 
         return ResponseEntity.ok(user);
