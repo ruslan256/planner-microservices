@@ -2,9 +2,7 @@ package org.ruslan.todo.mc.users.mq.func;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Sinks;
 
 @Service
 @Getter
@@ -19,8 +17,8 @@ public class MessageActionsFunc {
 
     // send a message
     public void sendNewUserMessage(Long id) {
-        // add a new message to the listener
-        defChannelFunc.getInnerBus().emitNext(MessageBuilder.withPayload(id).build(), Sinks.EmitFailureHandler.FAIL_FAST);
-        log.info("Message sent: {}", id);
+//        // add a new message to the listener
+//        defChannelFunc.getInnerBus().emitNext(MessageBuilder.withPayload(id).build(), Sinks.EmitFailureHandler.FAIL_FAST);
+//        log.info("Message sent: {}", id);
     }
 }
